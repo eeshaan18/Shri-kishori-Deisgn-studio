@@ -121,7 +121,6 @@ const WhyChooseUs = () => {
                         {item.num}
                       </div>
                     </motion.div>
-                    
                   )}
                 </AnimatePresence>
 
