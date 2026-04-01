@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { headerData } from "../Header/Navigation/menuData";
 import Logo from "./Logo";
 import HeaderLink from "../Header/Navigation/HeaderLink";
@@ -11,78 +11,96 @@ const Header: React.FC = () => {
   const [sticky, setSticky] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
-  const scrollThreshold = 250;
-
+  // Optimized scroll event with 'passive: true' for better performance
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > scrollThreshold) {
-        setSticky(true);
-      } else {
-        setSticky(false);
-      }
+      setSticky(window.scrollY > 150);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Lock body scrolling when the mobile menu is open
+  useEffect(() => {
+    if (navbarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [navbarOpen]);
+
+  const closeMenu = useCallback(() => setNavbarOpen(false), []);
+
   return (
     <header
-      className={`fixed top-0 z-40 w-full pb-5 transition-all duration-700 ease-in-out ${sticky ? "shadow-lg bg-darkmode pt-5" : "shadow-none md:pt-14 pt-5"}`}
+      className={`fixed top-0 z-40 w-full transition-all duration-300 ease-in-out ${
+        sticky
+          ? "py-4 bg-darkmode/90 backdrop-blur-md shadow-lg border-b border-white/5" // Glassmorphism + subtle border
+          : "py-6 bg-transparent"
+      }`}
     >
-      <div className="lg:py-0 py-2">
-        <div className="container mx-auto lg:max-w-screen-xl md:max-w-screen-md flex items-center justify-between px-4">
-          {/* ✅ Logo with link to homepage */}
-          <Link href="/" aria-label="Home">
-            <Logo />
-          </Link>
+      <div className="container mx-auto px-4 lg:max-w-screen-xl md:max-w-screen-md flex items-center justify-between">
+        
+        {/* ✅ Logo (Z-index ensures it stays above the mobile backdrop) */}
+        <Link href="/" aria-label="Home" className="z-50 relative focus:outline-none">
+          <Logo />
+        </Link>
 
-          {/* ✅ Desktop navbar aligned to right */}
-          <nav className="hidden lg:flex flex-grow items-center gap-8 justify-end">
-            {headerData.map((item, index) => (
-              <HeaderLink key={index} item={item} />
-            ))}
-          </nav>
+        {/* ✅ Desktop Navigation */}
+        <nav className="hidden lg:flex flex-grow items-center gap-8 justify-end">
+          {headerData.map((item, index) => (
+            <HeaderLink key={index} item={item} />
+          ))}
+        </nav>
 
-          {/* ✅ Hamburger Menu Button */}
-          <button
-            onClick={() => setNavbarOpen(!navbarOpen)}
-            className="block lg:hidden p-2 rounded-lg"
-            aria-label="Toggle mobile menu"
-          >
-            <span className="block w-6 h-0.5 bg-white"></span>
-            <span className="block w-6 h-0.5 bg-white mt-1.5"></span>
-            <span className="block w-6 h-0.5 bg-white mt-1.5"></span>
-          </button>
-        </div>
-
-        {/* ✅ Backdrop for mobile menu */}
-        {navbarOpen && (
-          <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-40" />
-        )}
-
-        {/* ✅ Mobile Menu */}
-        <div
-          ref={mobileMenuRef}
-          className={`lg:hidden fixed top-0 right-0 h-full w-full bg-darkmode shadow-lg transform transition-transform duration-300 max-w-xs ${navbarOpen ? "translate-x-0" : "translate-x-full"
-            } z-50`}
+        {/* ✅ Animated Hamburger Menu Button */}
+        <button
+          onClick={() => setNavbarOpen(!navbarOpen)}
+          className="block lg:hidden p-2 rounded-lg z-50 relative group focus:outline-none"
+          aria-label="Toggle mobile menu"
+          aria-expanded={navbarOpen}
         >
-          <div className="flex items-center justify-between p-4">
-            <Link href="/" aria-label="Home">
-              <Logo />
-            </Link>
-            <button
-              onClick={() => setNavbarOpen(false)}
-              className="bg-[url('/images/closed.svg')] bg-no-repeat bg-contain w-5 h-5 absolute top-0 right-0 mr-8 mt-8 dark:invert"
-              aria-label="Close menu Modal"
-            ></button>
+          <div className="w-6 flex flex-col items-end gap-1.5">
+            {/* Animates into an X when clicked */}
+            <span className={`block h-0.5 bg-white transition-all duration-300 ease-in-out ${navbarOpen ? "w-6 rotate-45 translate-y-2" : "w-6 group-hover:w-5"}`}></span>
+            <span className={`block h-0.5 bg-white transition-all duration-300 ease-in-out ${navbarOpen ? "opacity-0" : "w-5 group-hover:w-6"}`}></span>
+            <span className={`block h-0.5 bg-white transition-all duration-300 ease-in-out ${navbarOpen ? "w-6 -rotate-45 -translate-y-2" : "w-6 group-hover:w-4"}`}></span>
           </div>
-          <nav className="flex flex-col items-start p-4">
-            {headerData.map((item, index) => (
-              <MobileHeaderLink key={index} item={item} />
-            ))}
-          </nav>
+        </button>
+      </div>
+
+      {/* ✅ Clickable Backdrop with Fade Animation */}
+      <div
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300 ${
+          navbarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={closeMenu}
+        aria-hidden="true"
+      />
+
+      {/* ✅ Mobile Menu Drawer (Smoother Slide Animation) */}
+      <div
+        ref={mobileMenuRef}
+        className={`fixed top-0 right-0 h-full w-[80%] max-w-sm bg-darkmode shadow-2xl z-50 transform transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col ${
+          navbarOpen ? "translate-x-0" : "translate-x-full"
+        } lg:hidden`}
+      >
+        <div className="flex items-center justify-start p-6 mt-16 border-b border-white/10">
+          <span className="text-sm font-semibold uppercase text-gray-400 tracking-widest">Navigation</span>
         </div>
+        
+        {/* ✅ Corrected Mobile Navigation Mapping */}
+        <nav className="flex flex-col items-start px-6 py-4 gap-2 overflow-y-auto">
+          {headerData.map((item, index) => (
+            <MobileHeaderLink 
+              key={index} 
+              item={item} 
+              closeMenu={closeMenu} // Passed directly so the child handles the logic
+            />
+          ))}
+        </nav>
       </div>
     </header>
   );
