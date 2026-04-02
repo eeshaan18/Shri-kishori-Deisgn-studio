@@ -228,6 +228,7 @@ const Hero = () => {
                 </div>
               </motion.div>
 
+
               {/* Layer 5: Floating Nodes */}
               <motion.div style={{ x: useTransform(smoothMouseX, [-0.5, 0.5], [-40, 40]), y: useTransform(smoothMouseY, [-0.5, 0.5], [-40, 40]), transformStyle: "preserve-3d" }} className="absolute inset-0 pointer-events-none hidden sm:block">
                 <div className="absolute top-[22%] left-[28%] w-1.5 h-1.5 rotate-45 bg-[#99E39E] shadow-[0_0_12px_#99E39E]" style={{ transform: "translateZ(150px)" }} />
