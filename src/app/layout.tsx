@@ -6,6 +6,7 @@ import { ThemeProvider } from "next-themes";
 import ScrollToTop from "@/components/ScrollToTop";
 import Aoscompo from "@/utils/aos";
 const font = DM_Sans({ subsets: ["latin"] });
+import { Analytics } from "@vercel/analytics/next"
 
 export default function RootLayout({
   children,
@@ -15,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${font.className}`}>
+        <Analytics />
         <ThemeProvider
           attribute="class"
           enableSystem={true}
