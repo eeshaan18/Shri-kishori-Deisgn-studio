@@ -2,16 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================
+   GLOBAL HTML & SCROLL PHYSICS
+   ========================================== */
 html {
   scroll-behavior: smooth;
+  /* Hide scrollbar for Firefox */
+  scrollbar-width: none;  
+  /* Hide scrollbar for IE and Edge */
+  -ms-overflow-style: none;  
 }
 
-section{
+body {
+  /* Hide scrollbar for Firefox */
+  scrollbar-width: none;  
+  /* Hide scrollbar for IE and Edge */
+  -ms-overflow-style: none;  
+}
+
+/* Hide scrollbar for Webkit (Chrome, Safari, Opera, Edge) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* ==========================================
+   GLOBAL COMPONENT STYLES
+   ========================================== */
+section {
   @apply bg-darkmode;
 }
 
 .blog-details p, .blog-details hr {
-  @apply mb-8 ;
+  @apply mb-8;
 }
 
 .blog-details hr {

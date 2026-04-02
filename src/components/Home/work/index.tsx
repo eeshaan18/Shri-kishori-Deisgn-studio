@@ -32,7 +32,6 @@ const ZapIcon = () => (
   </svg>
 );
 
-
 // --- Custom Animated Number Hook ---
 interface AnimatedNumberProps {
   endValue: number;
@@ -47,8 +46,8 @@ const AnimatedNumber = ({ endValue, suffix = "", duration = 2.5 }: AnimatedNumbe
 
   useEffect(() => {
     if (inView) {
-      let startTime: number; // Explicitly typed as a number
-      const step = (timestamp: number) => { // Typed the timestamp parameter
+      let startTime: number; 
+      const step = (timestamp: number) => { 
         if (!startTime) startTime = timestamp;
         const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
         const easeProgress = 1 - Math.pow(1 - progress, 4); 
@@ -80,27 +79,26 @@ const Work = () => {
   ];
 
   return (
-    // 🚀 FIX 1: Restored bg-darkmode so it perfectly matches the section below it
-    <section className="py-20 md:py-32 bg-darkmode relative overflow-hidden" id="work">
+    <section className="py-20 md:py-32 bg-[#030406] relative overflow-hidden" id="work">
       
-      {/* 🚀 FIX 2: Bumped noise opacity from 4% to 12% so it's clearly visible */}
-      <div className="absolute inset-0 z-0 opacity-[0.12] mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+      {/* Noise Texture */}
+      <div className="absolute inset-0 z-0 opacity-[0.05] mix-blend-overlay pointer-events-none texture-noise" />
 
-      {/* 🚀 FIX 3: Cranked up the ambient glow opacity from /5 to /20 so the color pops */}
+      {/* Ambient Glows */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
          <motion.div 
            animate={{ x: [0, 80, -40, 0], y: [0, -60, 60, 0] }}
            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-           className="absolute top-1/4 -left-10 w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-[#F5D061]/20 rounded-full blur-[100px] md:blur-[150px]" 
+           className="absolute top-1/4 -left-10 w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-[#F5D061]/10 rounded-full blur-[100px] md:blur-[150px]" 
          />
          <motion.div 
            animate={{ x: [0, -80, 40, 0], y: [0, 60, -60, 0] }}
            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-           className="absolute bottom-1/4 -right-10 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-[#99E39E]/20 rounded-full blur-[100px] md:blur-[150px]" 
+           className="absolute bottom-1/4 -right-10 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-[#99E39E]/10 rounded-full blur-[100px] md:blur-[150px]" 
          />
       </div>
 
-      <div className="container mx-auto lg:max-w-screen-xl px-6 relative z-10">
+      <div className="container mx-auto lg:max-w-screen-xl px-4 sm:px-6 relative z-10">
         <div ref={containerRef} className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12 items-center">
           
           {/* --- LEFT SIDE --- */}
@@ -110,28 +108,37 @@ const Work = () => {
             variants={{ animate: { transition: { staggerChildren: 0.15 } } }}
             className="col-span-1 lg:col-span-5 pr-0 lg:pr-4"
           >
-            <motion.p variants={fadeUp} className="text-sm md:text-base text-gray-400 font-bold uppercase tracking-[0.2em] mb-4">
-              About <span className="text-[#F5D061]">Us</span>
+            <motion.p variants={fadeUp} className="text-[10px] sm:text-xs text-gray-400 font-mono uppercase tracking-[0.3em] mb-6">
+              Archive_Log // <span className="text-[#F5D061]">About_Us</span>
             </motion.p>
             
-            <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl lg:text-[52px] leading-[1.1] tracking-tight font-extrabold text-white mb-10 md:mb-16">
+            <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl lg:text-[52px] leading-[1.1] tracking-tight font-black text-white mb-10 md:mb-16">
               We Don’t Just Design.<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5D061] to-[#99E39E]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5D061] to-[#99E39E] bg-[length:200%_auto] animate-[shimmer_3s_linear_infinite]">
                 We Tell Stories.
               </span>
             </motion.h2>
             
             <div className="relative pl-6 md:pl-8 border-l border-white/10 space-y-8 md:space-y-12">
               {services.map((service, index) => (
-                <motion.div variants={fadeUp} key={index} className="relative group">
-                  {/* Changed the dot background to match bg-darkmode */}
-                  <div className="absolute -left-[30px] md:-left-[38px] top-1 w-4 h-4 rounded-full bg-darkmode border-[3px] border-white/20 group-hover:border-[#F5D061] transition-colors duration-500 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-10" />
-                  <div className="absolute -left-[25px] md:-left-[33px] top-4 w-[2px] h-full bg-gradient-to-b from-[#F5D061] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <motion.div variants={fadeUp} key={index} className="relative group cursor-default">
+                  {/* Dynamic Dot */}
+                  <div className="absolute -left-[30px] md:-left-[38px] top-1 w-4 h-4 rounded-full bg-[#030406] border-[3px] border-white/20 group-hover:border-[#F5D061] transition-colors duration-500 shadow-[0_0_10px_rgba(0,0,0,0.5)] group-hover:shadow-[0_0_15px_#F5D061] z-10" />
+                  
+                  {/* UX UPGRADE: Scanning Laser Tracking Line */}
+                  <div className="absolute -left-[25px] md:-left-[33px] top-4 bottom-0 w-[2px] bg-white/5 overflow-hidden">
+                    <motion.div 
+                        className="w-full h-full bg-gradient-to-b from-[#F5D061] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        initial={{ y: "-100%" }}
+                        whileHover={{ y: "100%", transition: { duration: 1.5, repeat: Infinity, ease: "linear" } }}
+                    />
+                  </div>
+
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 text-gray-500 group-hover:text-[#F5D061] transition-colors duration-500 mt-0.5">
                       {service.icon}
                     </div>
-                    <p className="text-base md:text-[18px] text-gray-300 font-medium leading-relaxed group-hover:text-white transition-colors duration-300">
+                    <p className="text-sm md:text-[16px] text-gray-400 font-medium leading-relaxed group-hover:text-white transition-colors duration-300">
                       {service.text}
                     </p>
                   </div>
@@ -147,18 +154,18 @@ const Work = () => {
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="col-span-1 lg:col-span-7 relative w-full"
           >
-            {/* HUD Crosshairs (Hidden on very small screens to prevent overflow) */}
+            {/* HUD Crosshairs */}
             <div className="hidden sm:block absolute -top-3 -left-3 text-white/20 z-20"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2V22M2 12H22" stroke="currentColor" strokeWidth="1"/></svg></div>
             <div className="hidden sm:block absolute -top-3 -right-3 text-white/20 z-20"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2V22M2 12H22" stroke="currentColor" strokeWidth="1"/></svg></div>
             <div className="hidden sm:block absolute -bottom-3 -left-3 text-white/20 z-20"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2V22M2 12H22" stroke="currentColor" strokeWidth="1"/></svg></div>
             <div className="hidden sm:block absolute -bottom-3 -right-3 text-white/20 z-20"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2V22M2 12H22" stroke="currentColor" strokeWidth="1"/></svg></div>
 
             {/* Main Glass Container */}
-            <div className="relative p-2 md:p-3 rounded-[24px] md:rounded-[32px] bg-gradient-to-b from-white/10 to-transparent shadow-[0_30px_60px_rgba(0,0,0,0.6)]">
-              <div className="absolute inset-0 bg-[#0A0C10]/90 backdrop-blur-3xl rounded-[24px] md:rounded-[32px] -z-10" />
+            <div className="relative p-2 md:p-3 rounded-[24px] md:rounded-[32px] bg-gradient-to-b from-white/5 to-transparent shadow-[0_30px_60px_rgba(0,0,0,0.6)] border border-white/5">
+              <div className="absolute inset-0 bg-[#0A0C10]/60 backdrop-blur-3xl rounded-[24px] md:rounded-[32px] -z-10 texture-noise" />
               
               <div className="px-4 md:px-6 py-3 md:py-4 flex items-center justify-between mb-2">
-                <h3 className="text-xs md:text-sm font-mono text-gray-400 tracking-[0.1em] uppercase">System_Metrics</h3>
+                <h3 className="text-[10px] md:text-xs font-mono text-gray-500 tracking-[0.2em] uppercase">System_Metrics</h3>
                 <div className="flex gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
                   <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
@@ -166,30 +173,37 @@ const Work = () => {
                 </div>
               </div>
 
-              {/* 🚀 UPGRADE 3: Fully Responsive Grid Columns & Padding */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
                 
                 {/* Card 1: Premium Projects */}
-                <div className="relative p-6 md:p-8 rounded-[16px] md:rounded-[24px] bg-[#12141C] border border-white/5 group hover:border-[#F5D061]/30 transition-colors overflow-hidden flex flex-col justify-between min-h-[160px] md:min-h-[220px]">
+                <motion.div 
+                    whileHover={{ scale: 0.98 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    className="relative p-6 md:p-8 rounded-[16px] md:rounded-[24px] bg-white/[0.02] border border-white/5 group hover:border-[#F5D061]/30 hover:bg-white/[0.04] transition-colors overflow-hidden flex flex-col justify-between min-h-[160px] md:min-h-[220px]"
+                >
                   <div className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
                   <div className="relative z-10">
-                    <p className="text-gray-400 text-xs md:text-sm font-medium mb-1 md:mb-2 uppercase tracking-wide">Premium Projects</p>
+                    <p className="text-gray-500 font-mono text-[9px] md:text-[10px] mb-2 uppercase tracking-widest">Protocol // Premium</p>
                     <div className="text-5xl md:text-6xl font-black text-white tracking-tighter">
                       <AnimatedNumber endValue={15} suffix="+" />
                     </div>
                   </div>
-                  <div className="absolute bottom-0 left-0 h-1 w-0 bg-[#F5D061] group-hover:w-full transition-all duration-700 ease-out" />
-                </div>
+                  <div className="absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r from-[#F5D061] to-[#99E39E] group-hover:w-full transition-all duration-700 ease-out" />
+                </motion.div>
 
                 {/* Card 2: Designs Created */}
-                <div className="relative p-6 md:p-8 rounded-[16px] md:rounded-[24px] bg-[#12141C] border border-white/5 group hover:border-[#99E39E]/30 transition-colors overflow-hidden flex flex-col justify-between min-h-[160px] md:min-h-[220px]">
+                <motion.div 
+                    whileHover={{ scale: 0.98 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    className="relative p-6 md:p-8 rounded-[16px] md:rounded-[24px] bg-white/[0.02] border border-white/5 group hover:border-[#99E39E]/30 hover:bg-white/[0.04] transition-colors overflow-hidden flex flex-col justify-between min-h-[160px] md:min-h-[220px]"
+                >
                   <div className="relative z-10">
-                    <p className="text-gray-400 text-xs md:text-sm font-medium mb-1 md:mb-2 uppercase tracking-wide">Designs Created</p>
-                    <div className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 tracking-tighter">
+                    <p className="text-gray-500 font-mono text-[9px] md:text-[10px] mb-2 uppercase tracking-widest">Protocol // Assets</p>
+                    <div className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-600 tracking-tighter">
                       <AnimatedNumber endValue={50} suffix="+" />
                     </div>
                   </div>
-                  {/* Scaled down sparkline for mobile */}
+                  {/* Dynamic SVG Sparkline */}
                   <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 w-24 h-12 md:w-32 md:h-16 opacity-40 group-hover:opacity-100 transition-opacity duration-500">
                     <svg viewBox="0 0 100 50" className="w-full h-full overflow-visible">
                       <motion.polyline 
@@ -201,6 +215,7 @@ const Work = () => {
                         strokeLinejoin="round"
                         initial={{ pathLength: 0 }}
                         whileInView={{ pathLength: 1 }}
+                        viewport={{ once: true }}
                         transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
                       />
                       <path d="M0,50 L20,30 L40,40 L60,15 L80,25 L100,0 L100,50 L0,50 Z" fill="url(#sparkline-gradient)" opacity="0.2" />
@@ -212,37 +227,46 @@ const Work = () => {
                       </defs>
                     </svg>
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Card 3: Happy Clients */}
-                <div className="relative p-6 md:p-8 rounded-[16px] md:rounded-[24px] bg-[#12141C] border border-white/5 group hover:border-white/30 transition-colors overflow-hidden flex flex-col justify-between min-h-[160px] md:min-h-[220px]">
+                <motion.div 
+                    whileHover={{ scale: 0.98 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    className="relative p-6 md:p-8 rounded-[16px] md:rounded-[24px] bg-white/[0.02] border border-white/5 group hover:border-white/30 hover:bg-white/[0.04] transition-colors overflow-hidden flex flex-col justify-between min-h-[160px] md:min-h-[220px]"
+                >
                   <div className="relative z-10">
-                    <p className="text-gray-400 text-xs md:text-sm font-medium mb-1 md:mb-2 uppercase tracking-wide">Happy Clients</p>
+                    <p className="text-gray-500 font-mono text-[9px] md:text-[10px] mb-2 uppercase tracking-widest">Protocol // Retention</p>
                     <div className="text-5xl md:text-6xl font-black text-white tracking-tighter">
                       <AnimatedNumber endValue={10} suffix="+" />
                     </div>
                   </div>
-                  {/* Radar adjusted for mobile padding */}
+                  {/* Radar Tracker */}
                   <div className="absolute bottom-6 right-8 md:bottom-8 md:right-12 flex items-center justify-center">
                     <div className="absolute w-12 h-12 md:w-16 md:h-16 rounded-full border border-white/10 animate-ping opacity-50" style={{ animationDuration: '3s' }} />
                     <div className="absolute w-6 h-6 md:w-8 md:h-8 rounded-full border border-white/20 animate-ping" style={{ animationDuration: '2s' }} />
                     <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-white shadow-[0_0_10px_#fff]" />
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Card 4: Singular Vision */}
-                <div className="relative p-6 md:p-8 rounded-[16px] md:rounded-[24px] bg-gradient-to-br from-[#F5D061] to-[#E6B800] group hover:shadow-[0_15px_40px_rgba(245,208,97,0.3)] transition-all duration-500 overflow-hidden flex flex-col justify-between min-h-[160px] md:min-h-[220px]">
+                <motion.div 
+                    whileHover={{ scale: 0.98 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    className="relative p-6 md:p-8 rounded-[16px] md:rounded-[24px] bg-gradient-to-br from-[#F5D061] to-[#E6B800] group shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition-all duration-500 overflow-hidden flex flex-col justify-between min-h-[160px] md:min-h-[220px] cursor-default"
+                >
+                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-300" />
                   <div className="relative z-10">
-                    <p className="text-[#03050A]/70 text-xs md:text-sm font-bold mb-1 md:mb-2 uppercase tracking-wide">Singular Vision</p>
-                    <div className="text-3xl sm:text-4xl md:text-5xl font-black text-[#03050A] tracking-tight leading-none mt-1 md:mt-2">
+                    <p className="text-[#030406]/60 font-mono text-[9px] md:text-[10px] mb-2 uppercase tracking-widest font-bold">Singular Vision</p>
+                    <div className="text-3xl sm:text-4xl md:text-5xl font-black text-[#030406] tracking-tight leading-[1] mt-1 md:mt-2">
                       Design That<br />Inspires.
                     </div>
                   </div>
                   {/* Watermark scaled down on mobile to prevent clipping issues */}
-                  <div className="absolute -bottom-6 -right-2 md:-bottom-10 md:-right-4 text-[100px] md:text-[180px] font-black leading-none text-[#03050A]/10 select-none group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-700">
+                  <div className="absolute -bottom-6 -right-2 md:-bottom-10 md:-right-4 text-[100px] md:text-[150px] font-black leading-none text-[#030406]/10 select-none group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-700 pointer-events-none">
                     1
                   </div>
-                </div>
+                </motion.div>
 
               </div>
             </div>
@@ -250,6 +274,23 @@ const Work = () => {
 
         </div>
       </div>
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        .texture-noise::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: 0.05;
+            z-index: 1;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+      `}} />
     </section>
   );
 };

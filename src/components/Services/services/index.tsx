@@ -1,236 +1,286 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- CUSTOM TACTICAL ICONS ---
-const WebIcon = () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
-);
-const AppIcon = () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-);
-const UIIcon = () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" /></svg>
-);
-const GraphicIcon = () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
-);
-const SEOIcon = () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-);
-const MarketingIcon = () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055zM20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
+// --- CYPHER TEXT DECRYPTION HOOK ---
+const useCypher = (text: string, isActive: boolean, speed = 30) => {
+    const [displayText, setDisplayText] = useState("");
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*<>";
+
+    useEffect(() => {
+        if (!isActive) {
+            setDisplayText(text); 
+            return;
+        }
+        setDisplayText("");
+        let iteration = 0;
+        const interval = setInterval(() => {
+            setDisplayText(text.split("").map((letter, index) => {
+                if (index < iteration) return text[index];
+                return chars[Math.floor(Math.random() * chars.length)];
+            }).join(""));
+
+            if (iteration >= text.length) clearInterval(interval);
+            iteration += 1 / 3;
+        }, speed);
+
+        return () => clearInterval(interval);
+    }, [text, isActive, speed]);
+
+    return displayText;
+};
+
+// --- CUSTOM ANIMATED SCHEMATICS ---
+const WebSchematic = ({ color }: { color: string }) => (
+    <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full opacity-30 mix-blend-screen" fill="none">
+        <motion.path stroke={color} strokeWidth="1" strokeDasharray="4 4" d="M20,100 Q60,20 100,100 T180,100" animate={{ strokeDashoffset: [0, -100] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
+        <motion.path stroke={color} strokeWidth="1" strokeDasharray="4 4" d="M20,100 Q60,180 100,100 T180,100" animate={{ strokeDashoffset: [0, 100] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
+        <circle cx="100" cy="100" r="40" stroke={color} strokeWidth="0.5" />
+        <circle cx="100" cy="100" r="4" fill={color} className="animate-pulse" />
+    </svg>
 );
 
+const MobileSchematic = ({ color }: { color: string }) => (
+    <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full opacity-30 mix-blend-screen" fill="none">
+        <motion.rect x="70" y="40" width="60" height="120" rx="10" stroke={color} strokeWidth="1.5" animate={{ y: [0, -10, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.rect x="50" y="60" width="60" height="120" rx="10" stroke={color} strokeWidth="0.5" opacity="0.5" animate={{ y: [0, 10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.rect x="90" y="20" width="60" height="120" rx="10" stroke={color} strokeWidth="0.5" opacity="0.5" animate={{ y: [0, 15, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} />
+    </svg>
+);
+
+const UISchematic = ({ color }: { color: string }) => (
+    <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full opacity-30 mix-blend-screen" fill="none">
+        <path stroke={color} strokeWidth="0.5" d="M0,50 H200 M0,100 H200 M0,150 H200 M50,0 V200 M100,0 V200 M150,0 V200" opacity="0.3" />
+        <motion.rect x="50" y="50" width="50" height="50" fill={color} opacity="0.2" animate={{ opacity: [0.1, 0.5, 0.1] }} transition={{ duration: 2, repeat: Infinity }} />
+        <motion.rect x="100" y="100" width="50" height="50" fill={color} opacity="0.2" animate={{ opacity: [0.1, 0.5, 0.1] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }} />
+    </svg>
+);
+
+const BrandSchematic = ({ color }: { color: string }) => (
+    <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full opacity-30 mix-blend-screen" fill="none">
+        <motion.polygon points="100,20 180,150 20,150" stroke={color} strokeWidth="1" animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} style={{ transformOrigin: 'center' }} />
+        <motion.polygon points="100,180 20,50 180,50" stroke={color} strokeWidth="0.5" opacity="0.5" animate={{ rotate: -360 }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} style={{ transformOrigin: 'center' }} />
+    </svg>
+);
+
+const SEOSchematic = ({ color }: { color: string }) => (
+    <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full opacity-30 mix-blend-screen" fill="none">
+        <motion.path stroke={color} strokeWidth="1.5" d="M20,150 L60,100 L100,120 L180,40" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
+        <circle cx="180" cy="40" r="5" fill={color} className="animate-pulse" />
+        <path stroke={color} strokeWidth="0.5" strokeDasharray="2 4" d="M20,180 H180 M20,20 V180" opacity="0.5" />
+    </svg>
+);
+
+const MarketingSchematic = ({ color }: { color: string }) => (
+    <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full opacity-30 mix-blend-screen" fill="none">
+        <circle cx="100" cy="100" r="80" stroke={color} strokeWidth="0.5" opacity="0.3" />
+        <circle cx="100" cy="100" r="40" stroke={color} strokeWidth="0.5" opacity="0.5" />
+        <motion.path stroke={color} strokeWidth="2" d="M100,100 L100,20" animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} style={{ transformOrigin: '100px 100px' }} />
+    </svg>
+);
+
+// --- DATASET ---
 const services = [
-    { id: "SRV_01", hex: "0x8A2F", title: "Web Architecture", description: "High-performance, scalable web platforms engineered for speed, security, and seamless user experiences across all devices.", icon: <WebIcon />, color: "#F5D061", tags: ["REACT / NEXT.JS", "NODE.JS", "FULL-STACK", "API DESIGN"] },
-    { id: "SRV_02", hex: "0x9C4B", title: "Mobile Ecosystems", description: "Native and cross-platform mobile applications that live in your users' pockets. Fluid motion, deep integrations, and flawless logic.", icon: <AppIcon />, color: "#99E39E", tags: ["REACT NATIVE", "IOS / ANDROID", "UX LOGIC"] },
-    { id: "SRV_03", hex: "0x1E7D", title: "Immersive UI/UX", description: "Data-driven interface design that converts. We map user journeys and craft kinetic, interactive realities that feel physically satisfying.", icon: <UIIcon />, color: "#F5D061", tags: ["WIREFRAMING", "PROTOTYPING", "KINETIC MOTION"] },
-    { id: "SRV_04", hex: "0x3F9A", title: "Brand Identity", description: "Visual languages that command authority. From pixel-perfect typography to comprehensive brand guidelines and stunning graphic assets.", icon: <GraphicIcon />, color: "#99E39E", tags: ["BRAND DNA", "TYPOGRAPHY", "VISUAL ASSETS"] },
-    { id: "SRV_05", hex: "0x7B2C", title: "SEO Telemetry", description: "Algorithmic dominance. We optimize your digital architecture to capture high-intent search traffic and climb to the absolute top of the index.", icon: <SEOIcon />, color: "#F5D061", tags: ["TECHNICAL SEO", "CORE WEB VITALS", "INDEX RANKING"] },
-    { id: "SRV_06", hex: "0x5D8E", title: "Digital Marketing", description: "Precision-targeted growth engines. We deploy data-backed campaigns designed to maximize ROI, capture market share, and scale aggressively.", icon: <MarketingIcon />, color: "#99E39E", tags: ["CONVERSION RATE", "CAMPAIGN LOGIC", "MARKET CAPTURE"] }
+    { id: "01", title: "Web Architecture", description: "High-performance, scalable web platforms engineered for speed, security, and seamless user experiences across all devices. We build digital assets that dominate metrics.", color: "#F5D061", tags: ["REACT / NEXT.JS", "NODE.JS", "FULL-STACK"], schematic: WebSchematic, hex: "0x8A2F" },
+    { id: "02", title: "Mobile Ecosystems", description: "Native and cross-platform mobile applications that live in your users' pockets. Fluid motion, deep integrations, and flawless logic designed for absolute retention.", color: "#99E39E", tags: ["REACT NATIVE", "IOS / ANDROID", "UX LOGIC"], schematic: MobileSchematic, hex: "0x9C4B" },
+    { id: "03", title: "Immersive UI/UX", description: "Data-driven interface design that converts. We map user journeys and craft kinetic, interactive realities that feel physically satisfying to navigate.", color: "#F5D061", tags: ["WIREFRAMING", "PROTOTYPING", "MOTION"], schematic: UISchematic, hex: "0x1E7D" },
+    { id: "04", title: "Brand Identity", description: "Visual languages that command authority. From pixel-perfect typography to comprehensive brand guidelines and stunning graphic assets that define markets.", color: "#99E39E", tags: ["BRAND DNA", "TYPOGRAPHY", "ASSETS"], schematic: BrandSchematic, hex: "0x3F9A" },
+    { id: "05", title: "SEO Telemetry", description: "Algorithmic dominance. We optimize your digital architecture to capture high-intent search traffic and climb to the absolute top of the index globally.", color: "#F5D061", tags: ["TECHNICAL SEO", "WEB VITALS", "RANKING"], schematic: SEOSchematic, hex: "0x7B2C" },
+    { id: "06", title: "Digital Marketing", description: "Precision-targeted growth engines. We deploy data-backed campaigns designed to maximize ROI, capture massive market share, and scale aggressively.", color: "#99E39E", tags: ["CONVERSION", "CAMPAIGNS", "ROI"], schematic: MarketingSchematic, hex: "0x5D8E" }
 ];
 
+// --- STAGGER ANIMATIONS ---
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.3 } }
+};
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
+
+// --- MAIN COMPONENT ---
 const ServicesSection = () => {
-    const [activeIndex, setActiveIndex] = useState(0);
-    const activeService = services[activeIndex];
+    const [activeIndex, setActiveIndex] = useState<number | null>(0);
 
     return (
-        <section className="pt-32 pb-24 relative w-full bg-[#030406] overflow-hidden min-h-screen" id="work">
+        <section className="pt-24 lg:pt-32 pb-24 lg:pb-32 relative w-full bg-[#030406] min-h-screen" id="work">
+            
+            {/* Dynamic Background Ambient Glow */}
+            <div 
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[1200px] h-[800px] pointer-events-none -z-10 transition-colors duration-1000"
+                style={{ background: `radial-gradient(ellipse at center, ${activeIndex !== null ? services[activeIndex].color : '#ffffff'}15, transparent 70%)` }} 
+            />
+            <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(255,255,255,1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,1)_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none -z-10" />
 
-            {/* --- Ambient Background Void & Grid Matrix --- */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[radial-gradient(circle_at_center,_rgba(245,208,97,0.03),_transparent_60%)] pointer-events-none -z-10" />
-            <div className="absolute inset-0 opacity-[0.02] bg-[linear-gradient(rgba(255,255,255,1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,1)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_70%)] pointer-events-none -z-10 animate-[pan_30s_linear_infinite]" />
-
-            <div className="container mx-auto lg:max-w-screen-xl px-4 sm:px-6 relative z-20">
-
-                {/* --- Header --- */}
-                <div className="flex flex-col items-center text-center mb-16 lg:mb-24">
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-8 shadow-sm relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] animate-[shimmer_2s_infinite]" />
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#99E39E] animate-pulse relative z-10" />
-                        <p className="text-gray-400 font-mono text-[10px] tracking-[0.3em] uppercase relative z-10">System Capabilities</p>
+            <div className="container mx-auto px-4 sm:px-6 lg:px-12 max-w-screen-2xl relative z-20">
+                
+                {/* Header */}
+                <div className="flex flex-col items-start mb-16 lg:mb-24">
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6 shadow-sm">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#F5D061] animate-pulse" />
+                        <p className="text-gray-400 font-mono text-[10px] tracking-[0.3em] uppercase">System Capabilities</p>
                     </motion.div>
-                    <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="text-white text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight mb-6 leading-[1.05]">
-                        Engineering <br className="hidden md:block" />
+                    <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="text-white text-5xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[1] max-w-4xl">
+                        Engineering <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5D061] to-[#99E39E]">Digital Dominance.</span>
                     </motion.h1>
-                    <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-gray-400 text-lg md:text-xl font-light max-w-2xl mx-auto leading-relaxed">
-                        Interact with the server stack to decrypt our specialized high-performance system logistics.
-                    </motion.p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+                {/* THE BRUTALIST TYPOGRAPHY ACCORDION */}
+                <motion.div layout className="w-full border-t border-white/20">
+                    {services.map((service, index) => {
+                        const isActive = activeIndex === index;
+                        const ActiveSchematic = service.schematic;
 
-                    {/* --- LEFT: THE 3D KINETIC SERVER STACK --- */}
-                    <div className="lg:col-span-5 relative w-full flex items-center justify-center lg:justify-end pr-0 lg:pr-8 [perspective:1200px]">
-
-                        {/* The Vertical Targeting Rail */}
-                        <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-white/5 hidden lg:block rounded-full">
-                            <motion.div
-                                className="absolute w-[4px] h-12 -left-[1px] rounded-full shadow-[0_0_15px_currentColor]"
-                                style={{ backgroundColor: activeService.color, color: activeService.color }}
-                                animate={{ top: `calc(${(activeIndex / (services.length - 1)) * 100}% - 24px)` }}
-                                transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                            />
-                        </div>
-
-                        <div className="flex flex-col gap-3 w-full max-w-[450px] relative z-10 py-8">
-                            {services.map((service, index) => {
-                                const isActive = activeIndex === index;
-                                return (
-                                    <div
-                                        key={service.id}
-                                        onMouseEnter={() => setActiveIndex(index)}
-                                        onClick={() => setActiveIndex(index)}
-                                        className="relative cursor-pointer w-full transition-all duration-500 [transform-style:preserve-3d]"
-                                        style={{
-                                            // The 3D Snap Effect
-                                            transform: isActive ? 'rotateX(0deg) scale(1.02) translateZ(20px)' : 'rotateX(15deg) scale(0.95) translateZ(0px)',
-                                            opacity: isActive ? 1 : 0.4,
-                                            zIndex: isActive ? 20 : 10
-                                        }}
-                                    >
-                                        <div className={`relative w-full p-4 sm:p-5 rounded-2xl flex items-center justify-between transition-all duration-500 overflow-hidden border
-                                    ${isActive ? 'bg-[#0A0C10]/95 border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.6)]' : 'bg-white/5 border-white/5'}
-                                `}>
-                                            {/* Active Sweep Background */}
-                                            <div className={`absolute inset-0 opacity-0 transition-opacity duration-500 blur-2xl ${isActive ? 'opacity-20' : ''}`} style={{ backgroundColor: service.color }} />
-
-                                            {/* Left Content: Icon + Title */}
-                                            <div className="relative z-10 flex items-center gap-4">
-                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors duration-500 ${isActive ? 'bg-white/10 text-white shadow-inner' : 'bg-transparent text-gray-500'}`} style={{ color: isActive ? service.color : '' }}>
-                                                    {service.icon}
-                                                </div>
-                                                <h3 className={`font-semibold text-lg tracking-tight transition-colors duration-300 ${isActive ? 'text-white' : 'text-gray-400'}`}>
-                                                    {service.title}
-                                                </h3>
-                                            </div>
-
-                                            {/* Right Content: ID Tag */}
-                                            <div className="relative z-10 hidden sm:block">
-                                                <span className={`font-mono text-[10px] tracking-widest uppercase transition-colors duration-300 ${isActive ? 'text-gray-300' : 'text-gray-600'}`}>
-                                                    {service.id}
-                                                </span>
-                                            </div>
-
-                                            {/* Active Left-Edge Mechanical Lighting */}
-                                            <div className={`absolute left-0 top-0 bottom-0 w-1 transition-all duration-500 ${isActive ? 'opacity-100 shadow-[0_0_20px_currentColor]' : 'opacity-0'}`} style={{ backgroundColor: service.color, color: service.color }} />
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </div>
-
-                    {/* --- RIGHT: THE ACTIVE PROTOCOL TERMINAL --- */}
-                    <div className="lg:col-span-7 relative flex items-center group/terminal">
-
-                        <div className="w-full relative bg-gradient-to-b from-[#0A0C10]/95 to-[#030406]/95 backdrop-blur-3xl border border-white/5 rounded-[40px] p-8 sm:p-10 lg:p-14 overflow-hidden shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),_0_30px_100px_rgba(0,0,0,0.8)] transition-all duration-700 group-hover/terminal:shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),_0_40px_120px_rgba(0,0,0,0.95)] group-hover/terminal:border-white/10 texture-noise">
-
-                            <div
-                                className="absolute inset-x-0 h-[1px] blur-[1px] animate-[scan_5s_linear_infinite] pointer-events-none"
-                                style={{ backgroundImage: `linear-gradient(to right, transparent, ${activeService.color}33, transparent)` }}
-                            />
-
-                            <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8 transition-colors duration-500" style={{ borderBottomColor: `${activeService.color}15` }}>
-                                <div className="flex items-center gap-3 opacity-60">
-                                    <span className="relative flex items-center justify-center">
-                                        <span className="absolute inset-0 bg-current rounded-full blur-[6px] opacity-40 animate-pulse" />
-                                        <span className="relative w-2 h-2 rounded-full" style={{ backgroundColor: activeService.color, color: activeService.color }} />
-                                    </span>
-                                    <span className="font-mono text-[10px] tracking-[0.2em] text-gray-400 uppercase">Active_Protocol</span>
-                                </div>
-                                <span className="font-mono text-[10px] tracking-widest text-white/20 transition-colors duration-500 group-hover/terminal:text-white/40">{activeService.id}</span>
-                            </div>
-
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={activeService.id}
-                                    initial={{ opacity: 0, x: 15, filter: "blur(12px) contrast(150%)" }}
-                                    animate={{ opacity: 1, x: 0, filter: "blur(0px) contrast(100%)" }}
-                                    exit={{ opacity: 0, x: -15, filter: "blur(12px) contrast(150%)" }}
-                                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                        return (
+                            <motion.div layout key={service.id} className="w-full overflow-hidden group">
+                                
+                                {/* TOP ROW: CLICKABLE HEADER */}
+                                <button 
+                                    onClick={() => setActiveIndex(isActive ? null : index)}
+                                    className="w-full py-8 lg:py-12 flex items-center justify-between outline-none text-left border-b border-white/20 transition-colors duration-500"
+                                    style={{ borderBottomColor: isActive ? `${service.color}40` : 'rgba(255,255,255,0.2)' }}
                                 >
-                                    {/* Live Hex-Code Telemetry Readout */}
-                                    <div className="flex items-center gap-2 mb-4 opacity-70">
-                                        <svg className="w-3 h-3 transition-colors duration-500" style={{ color: activeService.color }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                        </svg>
-                                        <span className="font-mono text-[9px] tracking-widest uppercase transition-colors duration-500" style={{ color: activeService.color }}>
-                                            MEM_ALLOC // {activeService.hex}.{activeService.id.split('_')[1]}
+                                    <div className="flex items-start lg:items-center gap-4 lg:gap-12 w-full pr-4">
+                                        <span className={`font-mono text-sm lg:text-xl tracking-widest mt-2 lg:mt-0 transition-colors duration-500 ${isActive ? 'text-white' : 'text-white/30 group-hover:text-white/60'}`}>
+                                            {service.id}
                                         </span>
+                                        
+                                        {/* BUG FIXED: Liquid Typography logic replaced with strict CSS properties 
+                                            Inactive: Hollow outline, transparent fill.
+                                            Hover: Solid white fill.
+                                            Active: Shimmering liquid gradient clip.
+                                        */}
+                                        <h2 
+                                            className={`text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter transition-all duration-700 leading-none break-words
+                                                ${isActive 
+                                                    ? 'text-transparent bg-clip-text bg-[length:200%_auto] animate-[shimmer_4s_linear_infinite]' 
+                                                    : 'text-transparent group-hover:text-white group-hover:![text-shadow:0_0_20px_rgba(255,255,255,0.5)]'
+                                                }
+                                            `}
+                                            style={{
+                                                WebkitTextStroke: isActive ? '0px transparent' : '1px rgba(255,255,255,0.4)',
+                                                backgroundImage: isActive 
+                                                    ? `linear-gradient(90deg, ${service.color}, #ffffff, ${service.color})` 
+                                                    : 'none',
+                                            }}
+                                        >
+                                            {service.title}
+                                        </h2>
                                     </div>
 
-                                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-6 tracking-tight leading-tight transition-all duration-500" style={{ backgroundImage: `linear-gradient(to right, ${activeService.color}, #ffffff)`, WebkitBackgroundClip: "text", color: "transparent", textShadow: `0 0 20px ${activeService.color}30` }}>
-                                        {activeService.title}
-                                    </h2>
-                                    <p className="text-gray-400 text-base sm:text-lg leading-relaxed font-light mb-12 min-h-[90px]">
-                                        {activeService.description}
-                                    </p>
-
-                                    <div>
-                                        <div className="flex items-center gap-2 opacity-50 mb-4">
-                                            <div className="w-8 h-px bg-white/20" />
-                                            <p className="font-mono text-[10px] tracking-[0.2em] text-gray-500 uppercase">System Logistics</p>
+                                    {/* Mechanical Targeting Reticle */}
+                                    <div className="hidden sm:flex shrink-0 w-14 h-14 rounded-full border items-center justify-center transition-all duration-700 relative overflow-hidden bg-[#0A0C10]" style={{ borderColor: isActive ? service.color : 'rgba(255,255,255,0.2)' }}>
+                                        <motion.div 
+                                            className="absolute inset-0 border-2 border-dashed rounded-full"
+                                            style={{ borderColor: isActive ? `${service.color}40` : 'transparent' }}
+                                            animate={{ rotate: isActive ? 360 : 0 }}
+                                            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                                        />
+                                        <div className="relative z-10 w-4 h-4 flex items-center justify-center">
+                                            <motion.span 
+                                                className="absolute w-full h-[2px] rounded-full transition-colors duration-500"
+                                                style={{ backgroundColor: isActive ? service.color : 'white' }}
+                                                animate={{ rotate: isActive ? 45 : 0 }}
+                                            />
+                                            <motion.span 
+                                                className="absolute w-full h-[2px] rounded-full transition-colors duration-500"
+                                                style={{ backgroundColor: isActive ? service.color : 'white' }}
+                                                animate={{ rotate: isActive ? -45 : 90 }}
+                                            />
                                         </div>
-                                        <div className="flex flex-wrap gap-3">
-                                            {activeService.tags.map((tag, i) => (
-                                                <motion.div
-                                                    key={`${activeService.id}-${i}`}
-                                                    initial={{ opacity: 0, y: 10 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: 0.2 + (i * 0.05), duration: 0.4 }}
-                                                    className="px-4 py-2 rounded-xl bg-white/[0.03] border border-white/5 font-mono text-[10px] tracking-widest text-gray-300 uppercase shadow-[inset_0_0_10px_rgba(255,255,255,0.02)] transition-all duration-300 cursor-default hover:-translate-y-1 hover:bg-white/[0.08] hover:border-white/20 hover:text-white"
-                                                    style={{ boxShadow: `inset 0 0 10px rgba(255,255,255,0.02), 0 5px 15px ${activeService.color}00` }}
-                                                    onMouseEnter={(e) => e.currentTarget.style.boxShadow = `inset 0 0 10px rgba(255,255,255,0.05), 0 5px 15px ${activeService.color}20`}
-                                                    onMouseLeave={(e) => e.currentTarget.style.boxShadow = `inset 0 0 10px rgba(255,255,255,0.02), 0 5px 15px ${activeService.color}00`}
-                                                >
-                                                    {tag}
+                                    </div>
+                                </button>
+
+                                {/* BOTTOM EXPANSION: THE DATA CORE */}
+                                <AnimatePresence initial={false}>
+                                    {isActive && (
+                                        <motion.div
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: "auto", opacity: 1 }}
+                                            exit={{ height: 0, opacity: 0 }}
+                                            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                                            className="w-full overflow-hidden"
+                                        >
+                                            <div className="w-full mt-8 mb-12 lg:mb-16 rounded-[32px] bg-[#0A0C10]/80 backdrop-blur-xl border shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),_0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col lg:flex-row relative" style={{ borderColor: `${service.color}30` }}>
+                                                
+                                                {/* Left: Content & Tags (Staggered Boot Sequence) */}
+                                                <motion.div variants={containerVariants} initial="hidden" animate="show" className="w-full lg:w-1/2 p-8 sm:p-10 lg:p-16 flex flex-col justify-between relative z-10">
+                                                    <div>
+                                                        <motion.div variants={itemVariants} className="flex items-center gap-3 mb-6">
+                                                            <span className="w-2 h-2 rounded-full animate-pulse shadow-[0_0_10px_currentColor]" style={{ backgroundColor: service.color, color: service.color }} />
+                                                            <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-white/50">
+                                                                Decrypted_Logistics // <DecryptedText text={service.hex} isActive={isActive} speed={10} />
+                                                            </span>
+                                                        </motion.div>
+                                                        <motion.p variants={itemVariants} className="text-gray-300 text-lg sm:text-xl lg:text-2xl font-light leading-relaxed mb-10 max-w-lg">
+                                                            <DecryptedText text={service.description} isActive={isActive} speed={10} />
+                                                        </motion.p>
+                                                    </div>
+
+                                                    <motion.div variants={itemVariants}>
+                                                        <p className="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-4">Core Technologies</p>
+                                                        <div className="flex flex-wrap gap-3">
+                                                            {service.tags.map((tag, i) => (
+                                                                <span 
+                                                                    key={i}
+                                                                    className="px-4 py-2 rounded-xl bg-white/[0.03] border border-white/10 font-mono text-[10px] sm:text-xs tracking-widest text-white uppercase shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-colors duration-300 hover:bg-white/[0.08] hover:border-white/30"
+                                                                >
+                                                                    {tag}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </motion.div>
                                                 </motion.div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            </AnimatePresence>
 
-                            {/* Corner Accent Brackets (Expanding on hover) */}
-                            <div className="absolute top-6 left-6 w-8 h-8 border-t border-l border-white/10 rounded-tl-xl transition-all duration-500 group-hover/terminal:w-12 group-hover/terminal:h-12 group-hover/terminal:border-white/30" style={{ borderColor: `${activeService.color}15` }} />
-                            <div className="absolute bottom-6 right-6 w-8 h-8 border-b border-r border-white/10 rounded-br-xl transition-all duration-500 group-hover/terminal:w-12 group-hover/terminal:h-12 group-hover/terminal:border-white/30" style={{ borderColor: `${activeService.color}15` }} />
+                                                {/* Right: Immersive Schematic */}
+                                                <div className="w-full lg:w-1/2 min-h-[300px] lg:min-h-[400px] relative bg-[#030406] overflow-hidden flex items-center justify-center border-t lg:border-t-0 lg:border-l border-white/5">
+                                                    <div className="absolute inset-0 opacity-40 mix-blend-screen" style={{ background: `radial-gradient(circle at center, ${service.color}40, transparent 70%)` }} />
+                                                    
+                                                    {/* Hardware Scanning Laser */}
+                                                    <motion.div 
+                                                        className="absolute top-0 left-0 w-full h-[2px] blur-[1px] z-20"
+                                                        style={{ background: `linear-gradient(90deg, transparent, ${service.color}, transparent)` }}
+                                                        animate={{ top: ['0%', '100%', '0%'] }}
+                                                        transition={{ duration: 6, ease: "linear", repeat: Infinity }}
+                                                    />
 
-                        </div>
-                    </div>
+                                                    <ActiveSchematic color={service.color} />
+                                                    
+                                                    {/* Tactical Watermark */}
+                                                    <span className="absolute bottom-6 right-6 font-mono text-[10px] tracking-[0.2em] text-white/30 uppercase border border-white/10 px-3 py-1 rounded bg-black/40 backdrop-blur-md">
+                                                        Visual_Override_Active
+                                                    </span>
+                                                </div>
 
-                </div>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+
+                            </motion.div>
+                        );
+                    })}
+                </motion.div>
             </div>
-
+            
+            {/* Global CSS Inject */}
             <style dangerouslySetInnerHTML={{
                 __html: `
-        .texture-noise::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            opacity: 0.05;
-            z-index: 1;
-            pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-        @keyframes scan {
-          0% { top: -10%; opacity: 0; }
-          10% { opacity: 0.5; }
-          90% { opacity: 0.5; }
-          100% { top: 110%; opacity: 0; }
-        }
-        @keyframes shimmer {
-          100% { transform: translateX(100%); }
-        }
-        @keyframes pan {
-            from { background-position: 0% 0%; }
-            to { background-position: 100% 100%; }
-        }
-      `}} />
+                @keyframes shimmer {
+                    0% { background-position: 200% center; }
+                    100% { background-position: -200% center; }
+                }
+                `
+            }} />
         </section>
     );
+};
+
+const DecryptedText = ({ text, isActive, speed }: { text: string, isActive: boolean, speed: number }) => {
+    const cypherText = useCypher(text, isActive, speed);
+    return <>{cypherText}</>;
 };
 
 export default ServicesSection;
