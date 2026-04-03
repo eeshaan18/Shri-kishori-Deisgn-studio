@@ -75,7 +75,7 @@ const Platform = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-[#F5D061] to-[#99E39E] rounded-full blur-xl opacity-0 group-hover:opacity-60 transition-opacity duration-700 pointer-events-none" />
                 
                 <Link
-                  href="#"
+                  href="/contact"
                   className="relative inline-flex items-center gap-3 px-8 py-4 bg-white text-[#0A0C10] rounded-full text-sm sm:text-base font-bold uppercase tracking-wider transition-all duration-500 hover:bg-[#F5D061] hover:-translate-y-1 overflow-hidden"
                 >
                   <span className="relative z-10 font-mono">Start Your Project</span>

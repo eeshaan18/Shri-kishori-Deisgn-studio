@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import RotatingCarousel from "./slider";
+import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { getImagePrefix } from "@/utils/utils";
 
@@ -144,20 +145,26 @@ const Hero = () => {
             <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center md:justify-start justify-center gap-4 sm:gap-6 w-full sm:w-auto">
 
               {/* Primary CTA (Magnetic Shimmer Glow) */}
-              <button className="relative w-full sm:w-auto overflow-hidden rounded-xl bg-gradient-to-r from-[#F5D061] via-[#FFF1BA] to-[#E6B800] bg-[length:200%_auto] animate-[shimmer_3s_linear_infinite] text-gray-900 py-4 px-8 font-bold tracking-wide transition-transform hover:scale-[1.02] active:scale-95 shadow-[0_0_30px_rgba(245,208,97,0.2)] hover:shadow-[0_0_40px_rgba(245,208,97,0.4)] group">
+              <Link
+                href="/contact"
+                className="relative block text-center sm:inline-block w-full sm:w-auto overflow-hidden rounded-xl bg-gradient-to-r from-[#F5D061] via-[#FFF1BA] to-[#E6B800] bg-[length:200%_auto] animate-[shimmer_3s_linear_infinite] text-gray-900 py-4 px-8 font-bold tracking-wide transition-transform hover:scale-[1.02] active:scale-95 shadow-[0_0_30px_rgba(245,208,97,0.2)] hover:shadow-[0_0_40px_rgba(245,208,97,0.4)] group"
+              >
                 <span className="relative z-10 flex items-center justify-center gap-3 uppercase text-xs tracking-widest font-mono">
                   Let’s Build Together
                   <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
                 </span>
-              </button>
+              </Link>
 
               {/* Secondary CTA (Glassmorphic Light Sweep) */}
-              <button className="group relative w-full sm:w-auto overflow-hidden text-white text-xs font-mono uppercase tracking-widest py-4 px-8 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-inner">
+              <Link
+                href="/portfolio"
+                className="group relative w-full sm:w-auto overflow-hidden text-white text-xs font-mono uppercase tracking-widest py-4 px-8 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-inner"
+              >
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
                 <span className="relative z-10">View Portfolio</span>
-              </button>
+              </Link>
 
             </motion.div>
           </motion.div>
