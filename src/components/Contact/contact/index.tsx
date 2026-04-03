@@ -101,10 +101,46 @@ export default function Contact() {
     const [focusedField, setFocusedField] = useState<string | null>(null);
     const [currency, setCurrency] = useState<'USD' | 'INR'>('USD');
     const [formData, setFormData] = useState({ name: "", email: "", category: "", budget: "", message: "" });
+    
+    // NEW STATES FOR SUBMISSION
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setFormData({ ...formData, [e.target.name]: e.target.value });
     const handleDropdownChange = (name: string, value: string) => setFormData({ ...formData, [name]: value });
-    const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); console.log("Transmission sent:", formData); };
+    
+    // UPDATED SUBMIT HANDLER WITH LIVE URL
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        // LIVE SKDS APPS SCRIPT ENDPOINT
+        const scriptURL = "https://script.google.com/macros/s/AKfycbzN0sH49PfZ1pLuT54jRACP8OfJPYpQwc5IRzOcSuuiBVwOv5mvJ9K4VrNaa73o6SNm/exec"; 
+
+        try {
+            const formBody = new FormData();
+            formBody.append("name", formData.name);
+            formBody.append("email", formData.email);
+            formBody.append("category", formData.category);
+            formBody.append("budget", formData.budget);
+            formBody.append("message", formData.message);
+
+            await fetch(scriptURL, {
+                method: "POST",
+                mode: "no-cors",
+                body: formBody,
+            });
+
+            setIsSuccess(true);
+            setFormData({ name: "", email: "", category: "", budget: "", message: "" });
+            
+        } catch (error) {
+            console.error("Transmission failed:", error);
+            alert("Error sending transmission. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     useEffect(() => { setFormData(prev => ({ ...prev, budget: "" })); }, [currency]);
 
@@ -177,74 +213,119 @@ export default function Contact() {
                     >
                         <div className="p-1 sm:p-0">
                             <div className="bg-[#0A0C10]/80 border border-white/10 rounded-[32px] md:rounded-[40px] backdrop-blur-2xl shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-hidden texture-noise">
-                                <div className="p-6 sm:p-8 md:p-12">
-                                    <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6 mb-8">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                                                <MailIcon className="w-4 h-4 text-white" />
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <h3 className="text-white font-bold text-base sm:text-lg tracking-tight">Transmission Terminal</h3>
-                                                <p className="text-gray-600 font-mono text-[9px] tracking-widest uppercase">Protocol // V2.0.6</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#99E39E]/10 border border-[#99E39E]/20">
-                                            <div className="w-1.5 h-1.5 bg-[#99E39E] animate-pulse shadow-[0_0_8px_#99E39E]" />
-                                            <span className="text-[#99E39E] font-mono text-[9px] tracking-widest uppercase">Ready_To_Sync</span>
-                                        </div>
-                                    </div>
-
-                                    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-[60]">
-                                            <div className="flex flex-col gap-2 relative group">
-                                                <label htmlFor="name" className="text-gray-500 font-mono text-[9px] tracking-[0.2em] uppercase ml-1 transition-colors group-focus-within:text-[#F5D061]">Initiator_Name</label>
-                                                <div className={`absolute inset-0 top-6 rounded-xl transition-opacity duration-500 blur-xl -z-10 ${focusedField === 'name' ? 'opacity-20' : 'opacity-0'}`} style={{ backgroundColor: '#F5D061' }} />
-                                                <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} onFocus={() => setFocusedField('name')} onBlur={() => setFocusedField(null)} placeholder="Enter Alias..." required className="w-full px-5 py-4 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder:text-gray-700 focus:outline-none focus:border-[#F5D061]/40 focus:bg-white/[0.05] transition-all" />
-                                            </div>
-                                            <div className="flex flex-col gap-2 relative group">
-                                                <label htmlFor="email" className="text-gray-500 font-mono text-[9px] tracking-[0.2em] uppercase ml-1 transition-colors group-focus-within:text-[#F5D061]">Return_Address</label>
-                                                <div className={`absolute inset-0 top-6 rounded-xl transition-opacity duration-500 blur-xl -z-10 ${focusedField === 'email' ? 'opacity-20' : 'opacity-0'}`} style={{ backgroundColor: '#F5D061' }} />
-                                                <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)} placeholder="name@domain.com" required className="w-full px-5 py-4 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder:text-gray-700 focus:outline-none focus:border-[#F5D061]/40 focus:bg-white/[0.05] transition-all" />
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-[50]">
-                                            <div className="flex flex-col gap-2 relative">
-                                                <label className="text-gray-500 font-mono text-[9px] tracking-[0.2em] uppercase ml-1">Service_Category</label>
-                                                <TerminalDropdown options={serviceOptions} value={formData.category} onChange={(val: string) => handleDropdownChange('category', val)} placeholder="Select Module..." colorCode="#F5D061" />
-                                                <input type="text" className="opacity-0 absolute bottom-0 left-1/2 w-0 h-0 -z-10" required value={formData.category} readOnly tabIndex={-1} />
-                                            </div>
-                                            <div className="flex flex-col gap-2 relative">
-                                                <div className="flex justify-between items-center mb-0.5">
-                                                    <label className="text-gray-500 font-mono text-[9px] tracking-[0.2em] uppercase ml-1">Allocation</label>
-                                                    <div className="flex bg-white/[0.05] p-0.5 rounded-full border border-white/5">
-                                                        {['USD', 'INR'].map((curr) => (
-                                                            <button key={curr} type="button" onClick={() => setCurrency(curr as any)} className={`text-[8px] font-mono px-2.5 py-0.5 rounded-full transition-all ${currency === curr ? 'bg-[#F5D061] text-black font-bold' : 'text-gray-600 hover:text-white'}`}>{curr}</button>
-                                                        ))}
+                                <div className="p-6 sm:p-8 md:p-12 relative min-h-[500px] flex flex-col justify-center">
+                                    
+                                    <AnimatePresence mode="wait">
+                                        {!isSuccess ? (
+                                            <motion.div
+                                                key="form"
+                                                initial={{ opacity: 0, filter: "blur(4px)" }}
+                                                animate={{ opacity: 1, filter: "blur(0px)" }}
+                                                exit={{ opacity: 0, filter: "blur(4px)" }}
+                                                transition={{ duration: 0.3 }}
+                                            >
+                                                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6 mb-8">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                                                            <MailIcon className="w-4 h-4 text-white" />
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <h3 className="text-white font-bold text-base sm:text-lg tracking-tight">Transmission Terminal</h3>
+                                                            <p className="text-gray-600 font-mono text-[9px] tracking-widest uppercase">Protocol // V2.0.6</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#99E39E]/10 border border-[#99E39E]/20">
+                                                        <div className={`w-1.5 h-1.5 bg-[#99E39E] rounded-full shadow-[0_0_8px_#99E39E] ${isSubmitting ? 'animate-ping' : 'animate-pulse'}`} />
+                                                        <span className="text-[#99E39E] font-mono text-[9px] tracking-widest uppercase">
+                                                            {isSubmitting ? 'Syncing_Data...' : 'Ready_To_Sync'}
+                                                        </span>
                                                     </div>
                                                 </div>
-                                                <TerminalDropdown options={budgetData[currency]} value={formData.budget} onChange={(val: string) => handleDropdownChange('budget', val)} placeholder="Select Tier..." colorCode="#F5D061" />
-                                                <input type="text" className="opacity-0 absolute bottom-0 left-1/2 w-0 h-0 -z-10" required value={formData.budget} readOnly tabIndex={-1} />
-                                            </div>
-                                        </div>
 
-                                        <div className="flex flex-col gap-2 relative group mt-2 z-[10]">
-                                            <label htmlFor="message" className="text-gray-500 font-mono text-[9px] tracking-[0.2em] uppercase ml-1 transition-colors group-focus-within:text-[#F5D061]">Encrypted_Payload</label>
-                                            <div className={`absolute inset-0 top-6 rounded-xl transition-opacity duration-500 blur-xl -z-10 ${focusedField === 'message' ? 'opacity-20' : 'opacity-0'}`} style={{ backgroundColor: '#F5D061' }} />
-                                            <textarea id="message" name="message" value={formData.message} onChange={handleInputChange} onFocus={() => setFocusedField('message')} onBlur={() => setFocusedField(null)} placeholder="Tell us about the digital reality you want to build..." required className="w-full px-5 py-4 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder:text-gray-700 focus:outline-none focus:border-[#F5D061]/40 focus:bg-white/[0.05] transition-all h-28 md:h-36 resize-none custom-scrollbar" />
-                                        </div>
+                                                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-[60]">
+                                                        <div className="flex flex-col gap-2 relative group">
+                                                            <label htmlFor="name" className="text-gray-500 font-mono text-[9px] tracking-[0.2em] uppercase ml-1 transition-colors group-focus-within:text-[#F5D061]">Initiator_Name</label>
+                                                            <div className={`absolute inset-0 top-6 rounded-xl transition-opacity duration-500 blur-xl -z-10 ${focusedField === 'name' ? 'opacity-20' : 'opacity-0'}`} style={{ backgroundColor: '#F5D061' }} />
+                                                            <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} onFocus={() => setFocusedField('name')} onBlur={() => setFocusedField(null)} placeholder="Enter Alias..." required disabled={isSubmitting} className="w-full px-5 py-4 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder:text-gray-700 focus:outline-none focus:border-[#F5D061]/40 focus:bg-white/[0.05] transition-all disabled:opacity-50" />
+                                                        </div>
+                                                        <div className="flex flex-col gap-2 relative group">
+                                                            <label htmlFor="email" className="text-gray-500 font-mono text-[9px] tracking-[0.2em] uppercase ml-1 transition-colors group-focus-within:text-[#F5D061]">Return_Address</label>
+                                                            <div className={`absolute inset-0 top-6 rounded-xl transition-opacity duration-500 blur-xl -z-10 ${focusedField === 'email' ? 'opacity-20' : 'opacity-0'}`} style={{ backgroundColor: '#F5D061' }} />
+                                                            <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)} placeholder="name@domain.com" required disabled={isSubmitting} className="w-full px-5 py-4 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder:text-gray-700 focus:outline-none focus:border-[#F5D061]/40 focus:bg-white/[0.05] transition-all disabled:opacity-50" />
+                                                        </div>
+                                                    </div>
 
-                                        <motion.button
-                                            whileHover={{ scale: 1.01, y: -2 }}
-                                            whileTap={{ scale: 0.98 }}
-                                            type="submit"
-                                            className="mt-2 group relative w-full flex items-center justify-center gap-3 py-4 md:py-5 px-6 rounded-xl bg-white text-black font-black text-xs md:text-sm tracking-[0.3em] uppercase overflow-hidden transition-all hover:bg-[#F5D061] shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
-                                        >
-                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
-                                            <span className="relative z-10">Transmit Data</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 relative z-10 transform transition-transform group-hover:translate-x-1.5"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-                                        </motion.button>
-                                    </form>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-[50]">
+                                                        <div className="flex flex-col gap-2 relative">
+                                                            <label className="text-gray-500 font-mono text-[9px] tracking-[0.2em] uppercase ml-1">Service_Category</label>
+                                                            <div className={isSubmitting ? "opacity-50 pointer-events-none" : ""}>
+                                                                <TerminalDropdown options={serviceOptions} value={formData.category} onChange={(val: string) => handleDropdownChange('category', val)} placeholder="Select Module..." colorCode="#F5D061" />
+                                                            </div>
+                                                            <input type="text" className="opacity-0 absolute bottom-0 left-1/2 w-0 h-0 -z-10" required value={formData.category} readOnly tabIndex={-1} />
+                                                        </div>
+                                                        <div className="flex flex-col gap-2 relative">
+                                                            <div className="flex justify-between items-center mb-0.5">
+                                                                <label className="text-gray-500 font-mono text-[9px] tracking-[0.2em] uppercase ml-1">Allocation</label>
+                                                                <div className="flex bg-white/[0.05] p-0.5 rounded-full border border-white/5">
+                                                                    {['USD', 'INR'].map((curr) => (
+                                                                        <button key={curr} type="button" disabled={isSubmitting} onClick={() => setCurrency(curr as any)} className={`text-[8px] font-mono px-2.5 py-0.5 rounded-full transition-all ${currency === curr ? 'bg-[#F5D061] text-black font-bold' : 'text-gray-600 hover:text-white'}`}>{curr}</button>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                            <div className={isSubmitting ? "opacity-50 pointer-events-none" : ""}>
+                                                                <TerminalDropdown options={budgetData[currency]} value={formData.budget} onChange={(val: string) => handleDropdownChange('budget', val)} placeholder="Select Tier..." colorCode="#F5D061" />
+                                                            </div>
+                                                            <input type="text" className="opacity-0 absolute bottom-0 left-1/2 w-0 h-0 -z-10" required value={formData.budget} readOnly tabIndex={-1} />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex flex-col gap-2 relative group mt-2 z-[10]">
+                                                        <label htmlFor="message" className="text-gray-500 font-mono text-[9px] tracking-[0.2em] uppercase ml-1 transition-colors group-focus-within:text-[#F5D061]">Encrypted_Payload</label>
+                                                        <div className={`absolute inset-0 top-6 rounded-xl transition-opacity duration-500 blur-xl -z-10 ${focusedField === 'message' ? 'opacity-20' : 'opacity-0'}`} style={{ backgroundColor: '#F5D061' }} />
+                                                        <textarea id="message" name="message" value={formData.message} onChange={handleInputChange} onFocus={() => setFocusedField('message')} onBlur={() => setFocusedField(null)} placeholder="Tell us about the digital reality you want to build..." required disabled={isSubmitting} className="w-full px-5 py-4 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder:text-gray-700 focus:outline-none focus:border-[#F5D061]/40 focus:bg-white/[0.05] transition-all h-28 md:h-36 resize-none custom-scrollbar disabled:opacity-50" />
+                                                    </div>
+
+                                                    <motion.button
+                                                        whileHover={!isSubmitting ? { scale: 1.01, y: -2 } : {}}
+                                                        whileTap={!isSubmitting ? { scale: 0.98 } : {}}
+                                                        type="submit"
+                                                        disabled={isSubmitting}
+                                                        className={`mt-2 group relative w-full flex items-center justify-center gap-3 py-4 md:py-5 px-6 rounded-xl font-black text-xs md:text-sm tracking-[0.3em] uppercase overflow-hidden transition-all shadow-[0_20px_40px_rgba(0,0,0,0.5)] ${isSubmitting ? 'bg-white/10 text-gray-400 cursor-not-allowed' : 'bg-white text-black hover:bg-[#F5D061]'}`}
+                                                    >
+                                                        {!isSubmitting && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />}
+                                                        <span className="relative z-10">{isSubmitting ? "Transmitting..." : "Transmit Data"}</span>
+                                                        {!isSubmitting && <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 relative z-10 transform transition-transform group-hover:translate-x-1.5"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>}
+                                                    </motion.button>
+                                                </form>
+                                            </motion.div>
+                                        ) : (
+                                            <motion.div
+                                                key="success"
+                                                initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
+                                                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                                                className="flex flex-col items-center justify-center text-center h-full py-10"
+                                            >
+                                                <div className="w-20 h-20 rounded-full bg-[#99E39E]/10 flex items-center justify-center mb-6 relative">
+                                                    <div className="absolute inset-0 bg-[#99E39E]/20 blur-xl rounded-full animate-pulse" />
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#99E39E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 relative z-10">
+                                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
+                                                    </svg>
+                                                </div>
+                                                <h3 className="text-white text-2xl md:text-3xl font-bold mb-4 tracking-tight">Transmission Received</h3>
+                                                <p className="text-gray-400 text-sm md:text-base max-w-sm leading-relaxed mb-8">
+                                                    Your data package has been successfully decrypted. Please check your secure email line; our team will revert to you within <span className="text-white font-medium">24-48 hours</span>.
+                                                </p>
+                                                <button 
+                                                    onClick={() => setIsSuccess(false)}
+                                                    className="text-gray-500 font-mono text-xs tracking-widest uppercase hover:text-[#F5D061] transition-colors border-b border-transparent hover:border-[#F5D061] pb-1"
+                                                >
+                                                    [ Initiate New Transmission ]
+                                                </button>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+
                                 </div>
                             </div>
                         </div>
