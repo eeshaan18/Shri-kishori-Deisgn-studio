@@ -1,9 +1,9 @@
 "use client";
 import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import RotatingCarousel from "./slider"; 
-import React, { useState, useEffect } from "react"; 
-import { getImagePrefix } from "@/utils/utils"; 
+import RotatingCarousel from "./slider";
+import React, { useState, useEffect } from "react";
+import { getImagePrefix } from "@/utils/utils";
 
 // --- SVG Icons for Services ---
 const Icons = {
@@ -47,7 +47,7 @@ const ServiceNode = ({ icon, label, position, tooltipPos }: ServiceNodeProps) =>
     <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-[#0A0C10]/80 backdrop-blur-md border border-white/10 flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.5)] group-hover:border-[#F5D061]/50 group-hover:bg-white/10 group-hover:shadow-[0_0_30px_rgba(245,208,97,0.3)] transition-all duration-300 z-10 relative">
       {icon}
     </div>
-    
+
     {/* RESPONSIVE UX UPGRADE: Tooltips won't break the screen edges on mobile anymore */}
     <div className={`absolute ${tooltipPos} opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-20`}>
       <div className="bg-[#0A0C10]/90 backdrop-blur-xl border border-white/10 text-white text-[10px] md:text-xs font-mono uppercase tracking-widest py-2 px-4 rounded-lg shadow-[0_10px_30px_rgba(0,0,0,0.8)] whitespace-nowrap">
@@ -79,7 +79,7 @@ const Hero = () => {
   const springConfig = { damping: 30, stiffness: 100, mass: 2 };
   const smoothMouseX = useSpring(mouseX, springConfig);
   const smoothMouseY = useSpring(mouseY, springConfig);
-  
+
   // 3D Tilt calculations
   const rotateX = useTransform(smoothMouseY, [-0.5, 0.5], [15, -15]);
   const rotateY = useTransform(smoothMouseX, [-0.5, 0.5], [-15, 15]);
@@ -101,23 +101,23 @@ const Hero = () => {
 
   return (
     <section className="relative pt-32 pb-24 overflow-hidden z-1 bg-[#030406]" id="main-banner">
-      
+
       {/* Background Textures */}
       <div className="absolute inset-0 z-20 opacity-[0.04] mix-blend-overlay pointer-events-none texture-noise" />
-      
+
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 mix-blend-screen">
-         <motion.div animate={{ x: [0, 150, -50, 0], y: [0, -100, 100, 0], scale: [1, 1.2, 0.9, 1] }} transition={{ duration: 22, repeat: Infinity, ease: "linear" }} className="absolute -top-[20%] -left-[10%] w-[50vw] h-[50vw] bg-[#F5D061]/10 blur-[130px] rounded-[100%]" />
-         <motion.div animate={{ x: [0, -100, 150, 0], y: [0, 150, -50, 0], scale: [1, 1.3, 1, 1] }} transition={{ duration: 28, repeat: Infinity, ease: "linear" }} className="absolute top-[10%] -right-[15%] w-[60vw] h-[60vw] bg-[#99E39E]/10 blur-[150px] rounded-[100%]" />
-         <motion.div animate={{ x: [-50, 50, -50], y: [0, -50, 0], scale: [1, 1.1, 1] }} transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-[20%] left-[20%] w-[70vw] h-[40vw] bg-[#0F4C3A]/15 blur-[140px] rounded-[100%]" />
+        <motion.div animate={{ x: [0, 150, -50, 0], y: [0, -100, 100, 0], scale: [1, 1.2, 0.9, 1] }} transition={{ duration: 22, repeat: Infinity, ease: "linear" }} className="absolute -top-[20%] -left-[10%] w-[50vw] h-[50vw] bg-[#F5D061]/10 blur-[130px] rounded-[100%]" />
+        <motion.div animate={{ x: [0, -100, 150, 0], y: [0, 150, -50, 0], scale: [1, 1.3, 1, 1] }} transition={{ duration: 28, repeat: Infinity, ease: "linear" }} className="absolute top-[10%] -right-[15%] w-[60vw] h-[60vw] bg-[#99E39E]/10 blur-[150px] rounded-[100%]" />
+        <motion.div animate={{ x: [-50, 50, -50], y: [0, -50, 0], scale: [1, 1.1, 1] }} transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-[20%] left-[20%] w-[70vw] h-[40vw] bg-[#0F4C3A]/15 blur-[140px] rounded-[100%]" />
       </div>
 
       {/* Main Grid Container */}
       <div className="container mx-auto lg:max-w-screen-xl px-4 sm:px-6 relative z-30 flex flex-col justify-center min-h-[60vh]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center">
-          
+
           {/* --- LEFT CONTENT --- */}
           <motion.div variants={containerVariants} initial="hidden" animate="show" className="col-span-1 lg:col-span-7">
-            
+
             {/* Tactical Pill */}
             <motion.div variants={itemVariants} className="mb-6 sm:mb-8 flex justify-center lg:justify-start">
               <div className="relative group">
@@ -142,7 +142,7 @@ const Hero = () => {
             </motion.p>
 
             <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center md:justify-start justify-center gap-4 sm:gap-6 w-full sm:w-auto">
-              
+
               {/* Primary CTA (Magnetic Shimmer Glow) */}
               <button className="relative w-full sm:w-auto overflow-hidden rounded-xl bg-gradient-to-r from-[#F5D061] via-[#FFF1BA] to-[#E6B800] bg-[length:200%_auto] animate-[shimmer_3s_linear_infinite] text-gray-900 py-4 px-8 font-bold tracking-wide transition-transform hover:scale-[1.02] active:scale-95 shadow-[0_0_30px_rgba(245,208,97,0.2)] hover:shadow-[0_0_40px_rgba(245,208,97,0.4)] group">
                 <span className="relative z-10 flex items-center justify-center gap-3 uppercase text-xs tracking-widest font-mono">
@@ -152,7 +152,7 @@ const Hero = () => {
                   </svg>
                 </span>
               </button>
-              
+
               {/* Secondary CTA (Glassmorphic Light Sweep) */}
               <button className="group relative w-full sm:w-auto overflow-hidden text-white text-xs font-mono uppercase tracking-widest py-4 px-8 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-inner">
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
@@ -171,15 +171,15 @@ const Hero = () => {
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
           >
-            <motion.div 
-              style={{ 
-                  rotateX: isTouchDevice ? 0 : rotateX, 
-                  rotateY: isTouchDevice ? 0 : rotateY, 
-                  transformStyle: "preserve-3d" 
+            <motion.div
+              style={{
+                rotateX: isTouchDevice ? 0 : rotateX,
+                rotateY: isTouchDevice ? 0 : rotateY,
+                transformStyle: "preserve-3d"
               }}
               className="relative w-full max-w-[320px] sm:max-w-[400px] aspect-square flex items-center justify-center origin-center"
             >
-              
+
               {/* Layer 1: Traditional Rings */}
               <motion.div animate={{ rotate: 360 }} transition={{ duration: 60, repeat: Infinity, ease: "linear" }} className="absolute inset-0 flex items-center justify-center" style={{ transform: "translateZ(-40px)" }}>
                 <svg viewBox="0 0 200 200" className="w-full h-full text-white/10" fill="none" stroke="currentColor">
@@ -209,22 +209,28 @@ const Hero = () => {
                 <ServiceNode icon={Icons.Web} label="Web Architecture" position="top-0 sm:top-2 left-1/2 -translate-x-1/2" tooltipPos="bottom-full mb-2 sm:mb-3" />
                 {/* Bottom Node */}
                 <ServiceNode icon={Icons.App} label="App Ecosystems" position="bottom-0 sm:bottom-2 left-1/2 -translate-x-1/2" tooltipPos="top-full mt-2 sm:mt-3" />
-                
+
                 {/* Left Node: Tooltip moves below the icon on mobile to prevent left-screen overflow */}
                 <ServiceNode icon={Icons.UiUx} label="UI/UX & Design" position="left-0 sm:left-2 top-1/2 -translate-y-1/2" tooltipPos="left-1/2 -translate-x-1/2 top-full mt-2 md:left-auto md:-translate-x-0 md:right-full md:mr-3 md:top-auto md:mt-0" />
-                
+
                 {/* Right Node: Tooltip moves below the icon on mobile to prevent right-screen overflow */}
                 <ServiceNode icon={Icons.Marketing} label="SEO & Marketing" position="right-0 sm:right-2 top-1/2 -translate-y-1/2" tooltipPos="left-1/2 -translate-x-1/2 top-full mt-2 md:left-auto md:-translate-x-0 md:left-full md:ml-3 md:top-auto md:mt-0" />
               </div>
 
               {/* Layer 4: The Core */}
-              <motion.div 
+              <motion.div
                 className="absolute w-[35%] h-[35%] sm:w-[40%] sm:h-[40%] max-w-[160px] max-h-[160px] rounded-full bg-[#0A0C10]/80 backdrop-blur-2xl border border-[#F5D061]/20 shadow-[inset_0_0_20px_rgba(255,255,255,0.05),_0_0_50px_rgba(245,208,97,0.15)] flex items-center justify-center overflow-hidden group hover:shadow-[inset_0_0_20px_rgba(255,255,255,0.1),_0_0_80px_rgba(245,208,97,0.3)] hover:border-[#F5D061]/50 transition-all duration-500"
-                style={{ transform: "translateZ(90px)" }} 
+                style={{ transform: "translateZ(90px)" }}
               >
                 <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} className="absolute w-[150%] h-[150%] bg-[linear-gradient(to_right,#F5D06115_1px,transparent_1px),linear-gradient(to_bottom,#F5D06115_1px,transparent_1px)] bg-[size:15px_15px] opacity-50" />
                 <div className="relative z-10 w-[60%] h-[60%] flex items-center justify-center">
-                  <Image src={`${getImagePrefix()}/images/logo.png`} alt="SK Design Studio Logo" fill className="object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] group-hover:scale-105 transition-transform duration-500" />
+                  <Image
+                    src="/images/logo.png"
+                    alt="SK Design Studio Logo"
+                    fill
+                    priority
+                    className="object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] group-hover:scale-105 transition-transform duration-500"
+                  />
                 </div>
               </motion.div>
 
@@ -241,12 +247,12 @@ const Hero = () => {
 
         </div>
       </div>
-        
+
       {/* BOTTOM FOLD: 3D Rotating Carousel */}
       <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 1, ease: "easeOut" }} className="w-full mt-12 lg:mt-16 relative z-20">
         <RotatingCarousel />
       </motion.div>
-      
+
       {/* Ambient Floor Lighting */}
       <div className="absolute w-[300px] sm:w-[400px] h-[300px] sm:h-[400px] bg-[radial-gradient(circle_at_center,_rgba(153,227,158,0.1),_transparent_70%)] rounded-full -bottom-32 -right-10 pointer-events-none -z-10" />
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#030406] to-transparent pointer-events-none z-30" />

@@ -52,14 +52,14 @@ const servicesData = [
 // --- COMPANY LOGO COMPONENT ---
 const CompanyLogo = () => (
   <div className="flex items-center justify-center w-[150px] md:w-[200px]">
-    <Image 
-      src={`${getImagePrefix()}/images/logo1.png`} 
-      alt="Shri Kishori Design Studio" 
-      width={200} 
-      height={80}
-      className="object-contain drop-shadow-[0_0_20px_rgba(245,208,97,0.2)]"
-      priority
-    />
+<Image 
+  src="/images/logo1.png" 
+  alt="Shri Kishori Design Studio" 
+  width={200} 
+  height={80}
+  className="object-contain drop-shadow-[0_0_20px_rgba(245,208,97,0.2)]"
+  priority
+/>
   </div>
 );
 
