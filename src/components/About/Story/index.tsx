@@ -54,7 +54,7 @@ const Story = () => {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-6 relative z-20"
           >
-            {/* Tactical Origin Badge */}
+            {/* Tactical Origin Badge  */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6 sm:mb-8 shadow-sm">
                <span className="w-1.5 h-1.5 rounded-full bg-[#F5D061] animate-pulse" />
                <p className="text-gray-400 font-mono text-[9px] sm:text-[10px] tracking-[0.3em] uppercase">
