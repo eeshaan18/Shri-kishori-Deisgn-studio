@@ -138,7 +138,7 @@ const Footer: FC = () => {
         {/* --- BOTTOM COPYRIGHT STRIP --- */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-12 relative z-20 border-t border-white/5 pt-8">
           <p className="text-gray-500 text-[11px] font-mono uppercase tracking-widest">
-            © {new Date().getFullYear()} SK_STUDIO // ALL_RIGHTS_RESERVED
+            © {new Date().getFullYear()} SK_Design_STUDIO // ALL_RIGHTS_RESERVED
           </p>
           <div className="flex items-center gap-3">
             <span className="w-1.5 h-1.5 rounded-full bg-[#F5D061] shadow-[0_0_8px_#F5D061] animate-pulse" />
