@@ -3,52 +3,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/icons/User";
 
-// --- VALIDATED CLIENT TELEMETRY (Strictly Gold & Green) ---
-const testimonials = [
-  {
-    id: "COMMS_01",
-    title: "Mr. Aarav Pandey",
-    short: "Product Manager",
-    color: "#F5D061", // Gold
-    body: "The attention to detail in their UI work is simply unmatched. Our app not only looks stunning but feels intuitive at every touchpoint.",
-  },
-  {
-    id: "COMMS_02",
-    title: "Mrs. Sanaya Verma",
-    short: "Co-Founder",
-    color: "#99E39E", // Green
-    body: "SK Design Studio built our website exactly how we envisioned — fast, smooth, and beautifully responsive.",
-  },
-  {
-    id: "COMMS_03",
-    title: "Mr. Rohit Mehta",
-    short: "Chief Technical Officer",
-    color: "#F5D061", // Gold
-    body: "Clean structure, seamless integrations, and lightning-fast delivery — their API development made our backend rock solid.",
-  },
-  {
-    id: "COMMS_04",
-    title: "Ms. Priya Sharma",
-    short: "Marketing Director",
-    color: "#99E39E", // Green
-    body: "Their digital architecture elevated our brand presence overnight. The kinetic UI elements immediately increased our user retention.",
-  },
-  {
-    id: "COMMS_05",
-    title: "Mr. Vikram Singh",
-    short: "Startup Founder",
-    color: "#F5D061", // Gold
-    body: "They don't just write code; they engineer complete digital experiences. Truly a Tier-1 technical partner.",
-  },
-  {
-    id: "COMMS_06",
-    title: "Mrs. Anjali Desai",
-    short: "Operations Head",
-    color: "#99E39E", // Green
-    body: "The transition from our old system to the new platform was flawless. Their full-stack capabilities are incredibly robust.",
-  }
-];
-
 const DURATION = 3000; 
 
 const Reviews = () => {
@@ -56,10 +10,39 @@ const Reviews = () => {
   const [progress, setProgress] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   
+  // DYNAMIC STATES
+  const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
   const listRef = useRef<HTMLDivElement>(null);
   const activeItemRef = useRef<HTMLButtonElement>(null);
 
+  // --- FETCH FROM GOOGLE SHEETS ---
   useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        // The URL now targets the Testimonials tab specifically
+        const API_URL = "https://script.google.com/macros/s/AKfycby7abOTP0vzMP-x13RwsC1fTKeZHpmSElq1sHxVQNqlRWsRHJ6wWhuPwmVZdPUSY4nT/exec?sheet=Testimonials";
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        
+        if (!data.error && data.length > 0) {
+            setTestimonials(data);
+        }
+      } catch (error) {
+        console.error("Failed to sync transmissions:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
+  // --- AUTO-ADVANCE ANIMATION LOGIC ---
+  useEffect(() => {
+    if (testimonials.length === 0) return; // Don't run if empty
+
     let startTime = Date.now();
     let animationFrameId: number;
 
@@ -85,10 +68,12 @@ const Reviews = () => {
 
     animationFrameId = requestAnimationFrame(updateProgress);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [activeIndex, isHovered, progress]);
+  }, [activeIndex, isHovered, progress, testimonials.length]);
 
-  // 🚀 THE FIX: Isolated Container Scrolling (No Window Yanking)
+  // --- SCROLL ALIGNMENT LOGIC ---
   useEffect(() => {
+    if (testimonials.length === 0) return;
+
     if (activeItemRef.current && listRef.current) {
       const list = listRef.current;
       const item = activeItemRef.current;
@@ -96,16 +81,32 @@ const Reviews = () => {
       const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
 
       if (isDesktop) {
-          // Calculate precise Y offset for desktop vertical list
           const scrollTop = item.offsetTop - (list.clientHeight / 2) + (item.clientHeight / 2);
           list.scrollTo({ top: scrollTop, behavior: "smooth" });
       } else {
-          // Calculate precise X offset for mobile horizontal list
           const scrollLeft = item.offsetLeft - (list.clientWidth / 2) + (item.clientWidth / 2);
           list.scrollTo({ left: scrollLeft, behavior: "smooth" });
       }
     }
-  }, [activeIndex]);
+  }, [activeIndex, testimonials.length]);
+
+
+  // --- LOADING / EMPTY STATES ---
+  if (isLoading) {
+    return (
+        <div className="w-full h-64 bg-transparent flex flex-col items-center justify-center font-mono text-[#99E39E] z-50">
+            <div className="flex items-center gap-3 mb-4">
+                <span className="w-2 h-2 bg-[#99E39E] rounded-full animate-ping" />
+                <span className="text-xs sm:text-sm tracking-[0.3em] uppercase">Intercepting Transmissions</span>
+            </div>
+            <p className="text-white/50 text-[10px] tracking-widest animate-pulse">ESTABLISHING SECURE LINK...</p>
+        </div>
+    );
+  }
+
+  if (testimonials.length === 0) {
+      return null; // Silently hide the section if no testimonials exist yet
+  }
 
   const activeReview = testimonials[activeIndex];
 
@@ -213,10 +214,10 @@ const Reviews = () => {
 
                 {/* Massive Watermark Quote */}
                 <div 
-                    className="absolute -top-6 -right-6 sm:-top-10 sm:-right-10 text-[150px] sm:text-[200px] leading-none font-serif italic opacity-[0.03] select-none pointer-events-none transition-all duration-1000 group-hover/panel:scale-110 group-hover/panel:opacity-[0.05]"
-                    style={{ color: activeReview.color }}
+                  className="absolute -top-6 -right-6 sm:-top-10 sm:-right-10 text-[150px] sm:text-[200px] leading-none font-serif italic opacity-[0.03] select-none pointer-events-none transition-all duration-1000 group-hover/panel:scale-110 group-hover/panel:opacity-[0.05]"
+                  style={{ color: activeReview.color }}
                 >
-                    &ldquo;
+                  &ldquo;
                 </div>
 
                 {/* Tech Corner Brackets */}

@@ -306,7 +306,7 @@ const PortfolioSection = () => {
 
         const fetchProjects = async () => {
             try {
-                const API_URL = "https://script.google.com/macros/s/AKfycbwzMUOGS2b2VnPPvNXWoks6WMBqTSR82u8oWxnJwtcPSu5iLCywpjL2enjRNkgN1z_m/exec";
+                const API_URL = "https://script.google.com/macros/s/AKfycby7abOTP0vzMP-x13RwsC1fTKeZHpmSElq1sHxVQNqlRWsRHJ6wWhuPwmVZdPUSY4nT/exec";
                 const response = await fetch(API_URL);
                 const data = await response.json();
 
